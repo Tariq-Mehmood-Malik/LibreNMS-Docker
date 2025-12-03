@@ -41,7 +41,7 @@ services:
       - FLUSH_DEAD_DATA_INTERVAL=3600
       - LISTEN_ADDR=0.0.0.0
       - LISTEN_PORT=42217
-      - RRD_DAEMON_OPTS=--base-dir=/data/rrd --daemon-address=0.0.0.0:42217
+      - RRD_DAEMON_OPTS=--base-dir=/data/db --daemon-address=0.0.0.0:42217
     ports:
       - "42217:42217"
     volumes:
@@ -50,7 +50,7 @@ services:
     restart: unless-stopped
 
   librenms:
-    image: librenms/librenms:latest
+    image: librenms/librenms:25.11.0
     container_name: librenms
     hostname: librenms
     cap_add:
@@ -68,7 +68,7 @@ services:
       - TZ=${TZ}
       - PUID=${PUID}
       - PGID=${PGID}
-      - APP_URL=http://localhost:8000
+      - APP_URL=${APP_URL}
       - DB_HOST=db
       - DB_NAME=${MYSQL_DATABASE}
       - DB_USER=${MYSQL_USER}
@@ -76,14 +76,15 @@ services:
       - DB_TIMEOUT=60
       - RRD_ENABLE=true
       - RRDCACHED_SERVER=rrdcached:42217
-      - RRD_DIR=/data/rrd
+      - RRD_DIR=/data/db
     volumes:
       - librenms_data:/data
-      - librenms_rrd_data:/data/rrd
+      - librenms_rrd_data:/data/db
     restart: unless-stopped
 
   dispatcher:
-    image: librenms/librenms:latest
+
+    image: librenms/librenms:25.11.0
     container_name: librenms_dispatcher
     hostname: librenms-dispatcher
     cap_add:
@@ -94,7 +95,7 @@ services:
       - redis
     volumes:
       - "librenms_data:/data"
-      - librenms_rrd_data:/data/rrd
+      - librenms_rrd_data:/data/db
     env_file:
       - "./librenms.env"
     environment:
@@ -112,7 +113,7 @@ services:
     restart: unless-stopped
 
   syslogng:
-    image: librenms/librenms:latest
+    image: librenms/librenms:25.11.0
     container_name: librenms_syslogng
     hostname: librenms-syslogng
     cap_add:
@@ -145,7 +146,7 @@ services:
     restart: unless-stopped
 
   snmptrapd:
-    image: librenms/librenms:latest
+    image: librenms/librenms:25.11.0
     container_name: librenms_snmptrapd
     hostname: librenms-snmptrapd
     cap_add:
@@ -182,4 +183,3 @@ volumes:
   librenms_data:
   librenms_rrd_data:
   librenms_rrd_journal:
-
