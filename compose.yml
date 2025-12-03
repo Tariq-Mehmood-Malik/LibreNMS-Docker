@@ -18,14 +18,14 @@ services:
       - "MYSQL_DATABASE=${MYSQL_DATABASE}"
       - "MYSQL_USER=${MYSQL_USER}"
       - "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
-    restart: always
+    restart: unless-stopped
 
   redis:
     image: redis:7.2-alpine
     container_name: librenms_redis
     environment:
       - "TZ=${TZ}"
-    restart: always
+    restart: unless-stopped
 
   rrdcached:
     image: crazymax/rrdcached
@@ -47,7 +47,7 @@ services:
     volumes:
       - librenms_rrd_data:/data/db
       - librenms_rrd_journal:/data/journal
-    restart: always
+    restart: unless-stopped
 
   librenms:
     image: librenms/librenms:latest
@@ -80,7 +80,7 @@ services:
     volumes:
       - librenms_data:/data
       - librenms_rrd_data:/data/rrd
-    restart: always
+    restart: unless-stopped
 
   dispatcher:
     image: librenms/librenms:latest
@@ -109,7 +109,7 @@ services:
       - "DISPATCHER_NODE_ID=dispatcher1"
       - RRDCACHED_SERVER=rrdcached:42217
       - SIDECAR_DISPATCHER=1
-    restart: always
+    restart: unless-stopped
 
   syslogng:
     image: librenms/librenms:latest
@@ -142,7 +142,7 @@ services:
       - "DB_PASSWORD=${MYSQL_PASSWORD}"
       - "DB_TIMEOUT=60"
       - "SIDECAR_SYSLOGNG=1"
-    restart: always
+    restart: unless-stopped
 
   snmptrapd:
     image: librenms/librenms:latest
@@ -175,10 +175,11 @@ services:
       - "DB_PASSWORD=${MYSQL_PASSWORD}"
       - "DB_TIMEOUT=60"
       - "SIDECAR_SNMPTRAPD=1"
-    restart: always
+    restart: unless-stopped
 
 volumes:
   librenms_db_data_1:
   librenms_data:
   librenms_rrd_data:
   librenms_rrd_journal:
+
