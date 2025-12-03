@@ -1,0 +1,85 @@
+docker run --rm -v nmsrrdcached_librenms_rrd_data:/data alpine chown -R 1000:1000 /data
+
+docker run --rm -v nmsrrdcached_librenms_rrd_journal:/data alpine chown -R 1000:1000 /data
+
+
+
+
+
+
+
+docker exec -it librenms bash
+
+
+su librenms
+
+./validate.php
+
+
+php lnms config:set rrdcached rrdcached:42217
+
+
+
+
+docker exec -it librenms sh
+nc -vz rrdcached 42217
+
+
+
+docker exec -it librenms bash
+mkdir -p /data/rrd
+chown -R librenms:librenms /data/rrd
+
+	
+docker exec -it librenms_rrdcached bash
+mkdir -p /data/db
+chown -R 1000:1000 /data/db
+exit
+
+
+docker exec -it librenms_rrdcached bash
+mkdir -p /data/rrd
+chown -R rrdcached:rrdcached /data/rrd
+
+
+docker exec -it librenms bash
+chown -R librenms:librenms /data
+
+docker exec -it librenms_rrdcached bash
+chown -R 1000:1000 /data
+
+
+
+
+
+
+
+
+
+docker exec -it librenms_rrdcached bash
+mkdir -p /data/rrd
+chown -R ${PUID}:${PGID} /data/rrd
+
+
+docker exec -it librenms bash
+mkdir -p /data/rrd
+chown -R librenms:librenms /data/rrd
+
+
+
+
+
+
+
+
+docker compose down
+docker compose up -d
+
+
+
+
+
+chown -R librenms:librenms /data
+chmod -R 775 /data
+
+
